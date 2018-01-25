@@ -5,11 +5,48 @@
 //  Created by admin on 18/1/23.
 //  Copyright © 2018年 Amon. All rights reserved.
 //
+// G
+#include <iostream>
+#include <map>
+#include <string>
+
+using namespace std;
+
+int main()
+{
+    int N;
+    string fruit, place;
+    int num;
+    scanf("%d", &N);
+    while (N--) {
+        
+        map<string, map<string, int>> myfruit;
+        
+        int M;
+        cin >> M;
+        for ( int i = 0; i < M; i++) {
+            cin >> fruit >> place >> num;
+            myfruit[place][fruit] += num;
+        }
+        map<string, map<string, int>>::iterator it;
+        map<string, int> :: iterator it2;
+        for (it = myfruit.begin(); it != myfruit.end(); it++) {
+            cout << it->first << endl;
+            for ( it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+                cout << "   |----" << it2->first << '(' << it2->second << ')' << endl;
+            }
+        }
+        if (N > 0)
+            cout << endl;
+    }
+    
+    return 0;
+}
 
 
 
-
-// I 超时
+/*
+// I
 #include <iostream>
 #include <list>
 
@@ -30,7 +67,7 @@ int main()
             list<int>::iterator it;
             while (num > 3) {
                 it = soldier.begin();
-                while ( num > 3 && it != soldier.end() ) {
+                while ( it != soldier.end() ) {
                     it++;
                     if ( it == soldier.end() ) {
                         break;
@@ -46,12 +83,12 @@ int main()
                     it = soldier.erase(it);
                     num--;
                 }
-                for (it = soldier.begin(); it != soldier.end(); it++) {
-                    cout << *it << ' ';
-                }
-                cout << endl;
+                
                 it = soldier.begin();
-                while ( num > 3 && it != soldier.end() ) {
+                if (num <= 3) {
+                    break;
+                }
+                while (it != soldier.end() ) {
                     it++;
                     if ( it == soldier.end()) {
                         break;
@@ -72,13 +109,13 @@ int main()
                     num--;
                     
                 }
-                for (it = soldier.begin(); it != soldier.end(); it++) {
-                    cout << *it << ' ';
-                }
-                cout << endl;
+               
             }
-            for (it = soldier.begin(); it != soldier.end(); it++) {
-                cout << *it << ' ';
+            it = soldier.begin();
+            cout << *it;
+            it++;
+            for ( ; it != soldier.end(); it++) {
+                cout << ' ' << *it ;
             }
             cout << endl;
         }
@@ -88,7 +125,7 @@ int main()
 
 
 
-/*
+
 // E
 #include <iostream>
 #include <vector>
