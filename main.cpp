@@ -1,318 +1,457 @@
 //
 //  main.cpp
-//  ACM_day_03
+//  ACM_0125
 //
-//  Created by admin on 18/1/23.
+//  Created by admin on 18/1/25.
 //  Copyright © 2018年 Amon. All rights reserved.
 //
-// G
-#include <iostream>
-#include <map>
-#include <string>
+//#include <iostream>
+//#include <string>
+//#include <vector>
+//using namespace std;
+//
+//int main()
+//{
+//    int n;
+//    while ( ~scanf("%d", &n)) {
+//        vector<string, vector<string>> boy;
+//        vector<string, vector<string>> girl;
+//        vector<string> dog;
+//        vector<int> boy1(500,-1); // 初始化为-1 没女朋友
+//        vector<int> girl1(500,-1); // 记录第i个女生的男朋友是第j个男生
+//        
+//        int num = 0;
+//        for (int i = 0; i < n; i++) {
+//            for (int j = 0; j <= n; j++) {
+//                cin >> boy[i][j];
+//                dog[num++] = boy[i][j];
+//            }
+//        } // 第i个男生喜欢的第j个女生
+//        for (int i = 0; i < n; i++) {
+//            for (int j = 0; j <= n; j++) {
+//                cin >> girl[i][j];
+//            }
+//        } // 第i个女生喜欢的第j个男生
+//        while (dog.size() != 0) {
+//            for (int i = 0; i <= n; i++) { // boy
+//                for (int j = 0; j < n; j++) {
+//                    
+//                }
+//            }
+//        }
+//
+//        
+//        
+//        
+//        
+//        
+//        
+//    }
+//    return 0;
+//}
 
+
+
+//#include <iostream>
+//#include <string>
+//#include <vector>
+//#include <algorithm>
+//using namespace std;
+//int cmp(int a, int b)
+//{
+//    return b-a;
+//}
+//
+//int a[100000];
+//
+//int main()
+//{
+//    int n, m, k;
+//    while ( ~scanf("%d%d%d",&n,&m,&k)) {
+//        for (int i = 0; i < n; i++) {
+//            cin >> a[i];
+//        }
+//        int left = 0, right = 0;
+//        int d = a[right] - a[left];
+//        int max = a[right];
+//        int min = a[left];
+//        int num = 0;
+//        int length[10000];
+//        int t = 0;
+//    
+//        while (right < n) {
+//            
+//            right++;
+//            num++;
+//            d = a[right] - a[left];
+//        }
+//        sort(length, length+t-1, cmp);
+//        cout << length[0] << endl;
+//        
+//        
+//        
+//    }
+//    return 0;
+//}
+
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
 using namespace std;
+
+struct cow{
+    int minSPF;
+    int maxSPF;
+    int is; // 初始化为0
+};
+struct lot{
+    int SPF;
+    int num;
+};
+
+int cmp1(cow a, cow b)
+{
+    return a.maxSPF < b.maxSPF;
+}
+
+int cmp2(lot a, lot b)
+{
+    return a.SPF < b.SPF;
+}
 
 int main()
 {
-    int N;
-    string fruit, place;
-    int num;
-    scanf("%d", &N);
-    while (N--) {
-        
-        map<string, map<string, int>> myfruit;
-        
-        int M;
-        cin >> M;
-        for ( int i = 0; i < M; i++) {
-            cin >> fruit >> place >> num;
-            myfruit[place][fruit] += num;
+    int C,L;
+    while (~scanf("%d%d",&C,&L)) {
+        cow cows[2502];
+        lot lots[2502];
+        for (int i = 0; i < C; i++) {
+            cin >> cows[i].minSPF >> cows[i].maxSPF;
+            cows[i].is = 0;
         }
-        map<string, map<string, int>>::iterator it;
-        map<string, int> :: iterator it2;
-        for (it = myfruit.begin(); it != myfruit.end(); it++) {
-            cout << it->first << endl;
-            for ( it2 = it->second.begin(); it2 != it->second.end(); it2++) {
-                cout << "   |----" << it2->first << '(' << it2->second << ')' << endl;
+        for (int i = 0; i < L; i++) {
+            cin >> lots[i].SPF >> lots[i].num;
+        }
+        sort(cows, cows+C, cmp1);
+        sort(lots, lots+L, cmp2);
+//        for (int i = 0; i < C; i++) {
+//            cout << cows[i].minSPF << ' ' << cows[i].maxSPF<< endl;
+//        }
+//        for (int i = 0; i < L; i++) {
+//            cout << lots[i].SPF << ' ' << lots[i].num << endl;
+//        }
+        int lnum = 0;
+        int num = 0;
+        for (int i = lnum; i < L; i++) {
+            for (int j = 0; j < C; j++) {
+                if (cows[j].is == 1) {
+                    continue;
+                }
+                if (lots[i].num == 0) {
+                    break;
+                }
+                if (lots[i].SPF <= cows[j].maxSPF && lots[i].SPF >= cows[j].minSPF) {
+                    num++;
+                    cows[j].is = 1;
+                    lots[i].num--;
+                }
             }
         }
-        if (N > 0)
-            cout << endl;
+        cout << num << endl;
+    }
+}
+
+
+
+
+
+/*
+// G 错误....
+#include <iostream>
+#include <cstdio>
+#include <queue>
+
+using namespace std;
+
+struct cow{
+    int minSPF;
+    int maxSPF;
+};
+
+struct lot{
+    int SPF;
+    int num;
+};
+
+priority_queue<cow> cows;
+priority_queue<lot> lots;
+
+bool operator< (cow a, cow b)
+{
+    if (a.maxSPF == b.maxSPF) {
+        return a.minSPF > b.minSPF;
+    }
+    return (a.maxSPF > b.maxSPF);
+}
+
+bool operator< (lot a, lot b)
+{
+    return (a.SPF > b.SPF);
+}
+
+int main()
+{
+    int C,L;
+    while (~scanf("%d%d",&C,&L)) {
+        while (cows.size() > 0) {
+            cows.pop();
+        }
+        while (lots.size() > 0) {
+            lots.pop();
+        }
+        for (int i = 0; i < C; i++) {
+            cow a;
+            cin >> a.minSPF >> a.maxSPF;
+            cows.push(a);
+        }
+        for (int i = 0; i < L; i++) {
+            lot a;
+            cin >> a.SPF >> a.num;
+            lots.push(a);
+        }
+//        for (int i = 0; i < C; i++) {
+//            cow a;
+//            a = cows.top();
+//            cout << a.minSPF << ' '<< a.maxSPF << endl;
+//            cows.pop();
+//        }
+        
+        int n = 0;
+        while (cows.size() != 0 && lots.size() != 0) {
+            lot l = lots.top();
+            if (l.num == 0) {
+                lots.pop();
+                continue;
+            }
+            cow c = cows.top();
+            if (c.minSPF <= l.SPF && c.maxSPF >= l.SPF ) {
+                l.num--;
+                lots.pop();
+                lots.push(l);
+                n++;
+                cows.pop();
+            }
+            else if (l.SPF > c.maxSPF){
+                cows.pop();
+            }
+        }
+        cout << n << endl;
+        
     }
     
     return 0;
 }
 
 
-
-/*
-// I
+// D
 #include <iostream>
-#include <list>
-
+#include <queue>
+#include <string>
 using namespace std;
 
-int main()
+typedef struct command {
+    string name;
+    int para;
+    int prio;
+    int k;
+}command;
+
+//priority_queue<command> com;
+
+bool operator< (const command &a, const command &b) // 重载
 {
-    int N;
-    while (~scanf("%d", &N)) {
-        while (N--) {
-            list<int> soldier;
-            int num;
-            cin >> num;
-            for (int i = 0; i < num; i++) {
-                soldier.push_back(i+1);
-            }
-            
-            list<int>::iterator it;
-            while (num > 3) {
-                it = soldier.begin();
-                while ( it != soldier.end() ) {
-                    it++;
-                    if ( it == soldier.end() ) {
-                        break;
-                    }
-                    list<int>::iterator it2;
-                    it2 = it;
-                    it2++;
-                    if (it2 == soldier.end()) {
-                        it = soldier.erase(it);
-                        num--;
-                        break;
-                    }
-                    it = soldier.erase(it);
-                    num--;
+    if (b.prio ==a.prio) {
+        return a.k > b.k;
+    }
+    return b.prio < a.prio;
+}
+
+int main(int argc, const char * argv[]) {
+    
+    priority_queue<command> com;
+    
+    char command1[4];
+    int i = 0;
+    while (~scanf("%s", command1)) {
+        
+        switch (command1[0]) {
+            case 'G':
+                if (com.size() == 0) {
+                    cout << "EMPTY QUEUE!" << endl;
                 }
-                
-                it = soldier.begin();
-                if (num <= 3) {
-                    break;
+                else {
+                    command a = com.top();
+                    com.pop();
+                    cout << a.name << ' ' << a.para << endl;
                 }
-                while (it != soldier.end() ) {
-                    it++;
-                    if ( it == soldier.end()) {
-                        break;
-                    }
-                    it++;
-                    if ( it == soldier.end()) {
-                        break;
-                    }
-                    list<int>::iterator it2;
-                    it2 = it;
-                    it2++;
-                    if (it2 == soldier.end()) {
-                        it = soldier.erase(it);
-                        num--;
-                        break;
-                    }
-                    it = soldier.erase(it);
-                    num--;
-                    
-                }
-               
+                break;
+            case 'P':{
+                command a;
+                cin >> a.name >> a.para;
+                cin >> a.prio;
+                a.k = i++;
+                com.push(a);
             }
-            it = soldier.begin();
-            cout << *it;
-            it++;
-            for ( ; it != soldier.end(); it++) {
-                cout << ' ' << *it ;
-            }
-            cout << endl;
+                break;
+            default:
+                cout << "错了啊啊啊啊啊啊" << endl;
+                break;
         }
     }
     return 0;
 }
 
+
+
+// A
+#include <iostream>
+#include <stack>
+#include <cstring>
+using namespace std;
+
+int main()
+{
+    stack<double> s;
+    double num;
+    char ch;
+    char blank;
+    while (~scanf("%lf%c", &num, &blank)) {
+        if (num == 0 && blank == '\n') {
+            break;
+        }
+        s.push(num);
+        while (scanf("%c", &ch)) {
+            scanf("%c%lf", &blank, &num);
+            switch (ch) {
+                case '+':
+                    s.push(num);
+                    break;
+                case '-':
+                    s.push(-num);
+                    break;
+                case '*':{
+                    double a = s.top();
+                    s.pop();
+                    s.push(a*num);
+                }
+                    break;
+                case '/':{
+                    double a = s.top();
+                    s.pop();
+                    s.push(a/num);
+                }
+                default:
+                    break;
+            }
+            scanf("%c", &blank);
+            if (blank == '\n') {
+                break;
+            }
+        }
+        double sum = 0;
+        while (s.size() != 0) {
+            sum += s.top();
+            s.pop();
+        }
+        printf("%0.2lf\n", sum);
+    }
+    return 0;
+}
+
+
+ 
+//B
+#include <iostream>
+#include <stack>
+#include <cstdio>
+#include <cstring>
+#include <string>
+
+using namespace std;
+
+int main(int argc, const char * argv[]) {
+    int n;
+    cin >> n;
+    getchar();
+flag:
+    while (n--) {
+        stack<char> str;
+        char a[130];
+        fgets(a, 130, stdin);
+        int i = 0;
+        while ( a[i] != '\0') {
+            switch (a[i]) {
+                case '(':
+                    str.push('(');
+                    break;
+                case '[':
+                    str.push('[');
+                    break;
+                case ')':
+                    if (str.size() > 0 && str.top() == '(') {
+                        str.pop();
+                    }
+                    else {
+                        cout << "No" << endl;
+                        goto flag;
+                    }
+                    break;
+                case ']':
+                    if (str.size() > 0 && str.top() == '[') {
+                        str.pop();
+                    }
+                    else {
+                        cout << "No" << endl;
+                        goto flag;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            i++;
+        }
+        if (str.size() != 0) {
+            cout << "No" << endl;
+        }
+        else {
+            cout << "Yes" << endl;
+        }
+    }
+    return 0;
+}
 
 
 
 // E
 #include <iostream>
-#include <vector>
-#include <queue>
-#include <algorithm>
-
 using namespace std;
-
-void find_row(vector<int> relat[], int num, int t, int &row) // 查找在哪个队
-{
-    for (int i = 0; i < t; i++) {
-        for (int j = 0; j < relat[i].size(); j++) {
-            if (relat[i][j] == num) {
-                row = i;
-                return;
-            }
-        }
-    }
-}
-
-int judge(vector<int> order, int n) // 判断
-{
-    for (int i = 0; i < order.size(); i++) {
-        if (order[i] == n) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-int main()
-{
-    int t = 0;
-    int Scenario = 0;
-    while (~scanf("%d", &t) && t != 0) {
-        
-        vector<int> relat[1000]; // 存储关系
-        queue<int> Queue[1000]; // 存储入队出队顺序
-        vector<int> order; // 存储组别是否出队完
-        
-        int d = 0;
-        for (int i = 0; i < t; i++) {
-            cin >> d;
-            for (int j = 0; j < d; j++) {
-                int num;
-                cin >> num;
-                relat[i].push_back(num);
-            }
-        }
-        string command;
-        cin >> command;
-        printf("Scenario #%d\n",++Scenario);
-        while ( command[0] != 'S' ) {
-            if (command[0] == 'E') {
-                // 入队
-                int num;
-                cin >> num;
-                int row = 0;
-                find_row(relat, num, t, row);
-                Queue[row].push(num);
-                if (judge(order, row) == 0) {
-                    order.push_back(row);
-                }
-            }
-            else {
-                // 出队
-                int row1 = order[0];
-                printf("%d\n",Queue[row1].front());
-                Queue[row1].pop();
-                if (Queue[row1].size() == 0) {
-                    order.erase(order.begin());
-                }
-            }
-            cin >> command;
-        }
-        printf("\n");
-    }
-    return 0;
-}
-
-
-
-
-
-// B
-// 人生中 第一段C++代码
-//  move a onto b 将a、b上的积木还原、a放到b上
-//  move a over b 将a上的积木还原，a放到b顶端
-//  pile a onto b 将b上积木还原，a及a上积木放到b上
-//  pile a over b a及a上积木放到b顶端
-
-
-#include <iostream>
-#include <vector>
-#include <string.h>
-#include <algorithm>
-
-using namespace std;
-
-vector<int> pile[25];
-
-void search(int &row, int &height, int a) // 查看第几行和高度
-{
-    for (int i = 0; i < 25; i++) {
-        for (int j = 0; j < pile[i].size(); j++) {
-            if (pile[i][j] == a) {
-                row = i;
-                height = j;
-                return;
-            }
-        }
-    }
-}
-
-void reset(int a, int row, int height) // 还原某一个块上的积木
-{
-    for (unsigned long i = pile[row].size() - 1; i > height; i--) {
-        int k = pile[row][i];
-        pile[row].pop_back();
-        pile[k].push_back(k);
-    }
-}
-
-void block_move(int row1, int row2, int height_a) //移动a到b上，或b顶端
-{
-    for (int i = height_a; i < pile[row1].size(); i++) {
-        pile[row2].push_back(pile[row1][i]);
-    }
-    pile[row1].resize( height_a );
-}
 
 int main(int argc, const char * argv[]) {
-    int n;
-    scanf("%d",&n);
-    for ( int i = 0; i < n; i++) {
-        pile[i].push_back(i);
-    }
-    vector<int> ::iterator it;
-    string command1;
-    string command2;
-    while (cin >> command1 && command1 != "quit" ) {
-        int a;
-        cin >> a;
-        cin >> command2;
-        int b;
-        cin >> b;
-        
-        int row1 = 0, row2 = 0, height1 = 0, height2 = 0;
-        search(row1, height1, a);
-        search(row2, height2, b);
-        if (row1 == row2) {
-            continue;
-        }
-        
-        if ( command1 == "move" ) {
-            if ( command2 == "onto" ) {
-                // move onto
-                // 将a、b上的积木还原、a放到b上
-                reset(a, row1, height1);
-                reset(b, row2, height2);
+    char str[1002];
+    while (~scanf("%s", str)) {
+        int num = 0;
+        int i = 0;
+        while ( str[i] != 'B') {
+            if (str[i] == '(') {
+                num++;
             }
-            else {
-                // move over
-                // 将a上的积木还原，a放到b顶端
-                reset(a, row1, height1);
+            else{
+                num--;
             }
+            i++;
         }
-        else {
-            if ( command2 == "onto" ) {
-                // pile onto
-                // 将b上积木还原，a及a上积木放到b上
-                reset(b, row2, height2);
-            }
-            // pile over
-            // a及a上积木放到b顶端
-        }
-        block_move(row1, row2, height1);
-    }
-    for (int i = 0; i < n; i++) {
-        printf("%d:",i);
-        for (int j = 0; j < pile[i].size(); j++) {
-            printf(" %d",pile[i][j]);
-        }
-        printf("\n");
-        
+        cout << num << endl;
     }
     return 0;
 }
-
 */
