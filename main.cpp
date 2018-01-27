@@ -1,312 +1,494 @@
 //
 //  main.cpp
-//  ACM_0125
+//  ACM_0126
 //
-//  Created by admin on 18/1/25.
+//  Created by admin on 18/1/26.
 //  Copyright © 2018年 Amon. All rights reserved.
 //
-//#include <iostream>
-//#include <string>
-//#include <vector>
-//using namespace std;
-//
-//int main()
-//{
-//    int n;
-//    while ( ~scanf("%d", &n)) {
-//        vector<string, vector<string>> boy;
-//        vector<string, vector<string>> girl;
-//        vector<string> dog;
-//        vector<int> boy1(500,-1); // 初始化为-1 没女朋友
-//        vector<int> girl1(500,-1); // 记录第i个女生的男朋友是第j个男生
-//        
-//        int num = 0;
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j <= n; j++) {
-//                cin >> boy[i][j];
-//                dog[num++] = boy[i][j];
-//            }
-//        } // 第i个男生喜欢的第j个女生
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j <= n; j++) {
-//                cin >> girl[i][j];
-//            }
-//        } // 第i个女生喜欢的第j个男生
-//        while (dog.size() != 0) {
-//            for (int i = 0; i <= n; i++) { // boy
-//                for (int j = 0; j < n; j++) {
-//                    
-//                }
-//            }
-//        }
-//
-//        
-//        
-//        
-//        
-//        
-//        
-//    }
-//    return 0;
-//}
-
-
-
-//#include <iostream>
-//#include <string>
-//#include <vector>
-//#include <algorithm>
-//using namespace std;
-//int cmp(int a, int b)
-//{
-//    return b-a;
-//}
-//
-//int a[100000];
-//
-//int main()
-//{
-//    int n, m, k;
-//    while ( ~scanf("%d%d%d",&n,&m,&k)) {
-//        for (int i = 0; i < n; i++) {
-//            cin >> a[i];
-//        }
-//        int left = 0, right = 0;
-//        int d = a[right] - a[left];
-//        int max = a[right];
-//        int min = a[left];
-//        int num = 0;
-//        int length[10000];
-//        int t = 0;
-//    
-//        while (right < n) {
-//            
-//            right++;
-//            num++;
-//            d = a[right] - a[left];
-//        }
-//        sort(length, length+t-1, cmp);
-//        cout << length[0] << endl;
-//        
-//        
-//        
-//    }
-//    return 0;
-//}
-
 #include <iostream>
 #include <cstdio>
 #include <algorithm>
+#include <cstring>
+
 using namespace std;
+int pre[2005];
+//int d[2005];
+int flag = 0;
 
-struct cow{
-    int minSPF;
-    int maxSPF;
-    int is; // 初始化为0
-};
-struct lot{
-    int SPF;
-    int num;
-};
-
-int cmp1(cow a, cow b)
+int find1(int a,int d[])
 {
-    return a.maxSPF < b.maxSPF;
+    if (pre[a] == a) {
+        return a;
+    }
+    int m = pre[a];
+    pre[a] = find1(pre[a],d);
+    d[a] = d[m] + 1 + d[a];
+    return pre[a];
 }
 
-int cmp2(lot a, lot b)
+int find2(int a)
 {
-    return a.SPF < b.SPF;
+    int r = a;
+    while (a != pre[a]) {
+        a = pre[a];
+    }
+    while (r != a) {
+        int i = pre[r];
+        pre[r] = a;
+        r = i;
+    }
+    return a;
 }
+
+void my_union(int a, int b, int d[])
+{
+    int a1 = find1(a,d);
+    int b1 = find1(b,d);
+    if ( a1 == b1) {
+        if ((d[a]+d[b]) % 2 == 0) {
+            flag = 1;
+            return;
+        }
+    }
+    pre[a1] = b1;
+    d[a1] = d[b] + 1 + d[a];
+}
+
 
 int main()
 {
-    int C,L;
-    while (~scanf("%d%d",&C,&L)) {
-        cow cows[2502];
-        lot lots[2502];
-        for (int i = 0; i < C; i++) {
-            cin >> cows[i].minSPF >> cows[i].maxSPF;
-            cows[i].is = 0;
+    int scenario;
+    cin >> scenario;
+    int _case = 1;
+    int d[2005];
+
+    while(scenario--) {
+        memset(pre, 0, sizeof(pre));
+        memset(d, 0, sizeof(d));
+        flag = 0;
+        int number,intera; // 虫  行为
+        scanf("%d%d",&number,&intera);
+        if (intera == 0) {
+            printf("Scenario #%d:\nNo suspicious bugs found!\n",_case++);
+            continue;
         }
-        for (int i = 0; i < L; i++) {
-            cin >> lots[i].SPF >> lots[i].num;
-        }
-        sort(cows, cows+C, cmp1);
-        sort(lots, lots+L, cmp2);
-//        for (int i = 0; i < C; i++) {
-//            cout << cows[i].minSPF << ' ' << cows[i].maxSPF<< endl;
-//        }
-//        for (int i = 0; i < L; i++) {
-//            cout << lots[i].SPF << ' ' << lots[i].num << endl;
-//        }
-        int lnum = 0;
-        int num = 0;
-        for (int i = lnum; i < L; i++) {
-            for (int j = 0; j < C; j++) {
-                if (cows[j].is == 1) {
-                    continue;
-                }
-                if (lots[i].num == 0) {
-                    break;
-                }
-                if (lots[i].SPF <= cows[j].maxSPF && lots[i].SPF >= cows[j].minSPF) {
-                    num++;
-                    cows[j].is = 1;
-                    lots[i].num--;
-                }
-            }
-        }
-        cout << num << endl;
-    }
-}
-
-
-
-
-
-/*
-// G 错误....
-#include <iostream>
-#include <cstdio>
-#include <queue>
-
-using namespace std;
-
-struct cow{
-    int minSPF;
-    int maxSPF;
-};
-
-struct lot{
-    int SPF;
-    int num;
-};
-
-priority_queue<cow> cows;
-priority_queue<lot> lots;
-
-bool operator< (cow a, cow b)
-{
-    if (a.maxSPF == b.maxSPF) {
-        return a.minSPF > b.minSPF;
-    }
-    return (a.maxSPF > b.maxSPF);
-}
-
-bool operator< (lot a, lot b)
-{
-    return (a.SPF > b.SPF);
-}
-
-int main()
-{
-    int C,L;
-    while (~scanf("%d%d",&C,&L)) {
-        while (cows.size() > 0) {
-            cows.pop();
-        }
-        while (lots.size() > 0) {
-            lots.pop();
-        }
-        for (int i = 0; i < C; i++) {
-            cow a;
-            cin >> a.minSPF >> a.maxSPF;
-            cows.push(a);
-        }
-        for (int i = 0; i < L; i++) {
-            lot a;
-            cin >> a.SPF >> a.num;
-            lots.push(a);
-        }
-//        for (int i = 0; i < C; i++) {
-//            cow a;
-//            a = cows.top();
-//            cout << a.minSPF << ' '<< a.maxSPF << endl;
-//            cows.pop();
-//        }
         
-        int n = 0;
-        while (cows.size() != 0 && lots.size() != 0) {
-            lot l = lots.top();
-            if (l.num == 0) {
-                lots.pop();
-                continue;
+        int n,m;
+        for (int i = 1; i <= intera; i++) {
+            scanf("%d%d", &n, &m);
+            if (pre[n] == 0) {
+                pre[n] = n;
             }
-            cow c = cows.top();
-            if (c.minSPF <= l.SPF && c.maxSPF >= l.SPF ) {
-                l.num--;
-                lots.pop();
-                lots.push(l);
-                n++;
-                cows.pop();
+            if (pre[m] == 0) {
+                pre[m] = m;
             }
-            else if (l.SPF > c.maxSPF){
-                cows.pop();
-            }
+            my_union(n, m, d);
+            
         }
-        cout << n << endl;
         
+        if (flag == 1) {
+            printf("Scenario #%d:\nSuspicious bugs found!\n",
+                   _case++);
+            
+        }
+        else{
+            printf("Scenario #%d:\nNo suspicious bugs found!\n",_case++);
+        }
     }
     
     return 0;
 }
 
 
-// D
-#include <iostream>
-#include <queue>
-#include <string>
-using namespace std;
 
-typedef struct command {
-    string name;
-    int para;
-    int prio;
-    int k;
-}command;
+//#include <iostream>
+//#include <cstdio>
+//#include <algorithm>
+//#include <cstring>
+//
+//using namespace std;
+//int pre[100005];
+//int in[100005];// 记录入度
+//int flag = 0;
+//
+//
+//
+//int find1(int a)
+//{
+//    if (pre[a] == a) {
+//        return a;
+//    }
+//    pre[a] = find1(pre[a]);
+//    return pre[a];
+//}
+//
+//int find2(int a)
+//{
+//    int r = a;
+//    while (a != pre[a]) {
+//        a = pre[a];
+//    }
+//    while (r != a) {
+//        int i = pre[r];
+//        pre[r] = a;
+//        r = i;
+//    }
+//    return a;
+//}
+//
+//void my_union(int a, int b)
+//{
+//    int a1 = find2(a);
+//    int b1 = find2(b);
+//    if ( a1 == b1) {
+//        flag = 1;
+//        return;
+//    }
+//    pre[a1] = b1;
+//    in[b] += 1;
+//}
+//
+//
+//int main()
+//{
+//    int n,m;
+//    int _case = 1;
+//aaaaaa:
+//    while (~scanf("%d%d",&n,&m) && n != -1 && m != -1) {
+//        if (n == 0 && m == 0) {
+//            printf("Case %d is a tree.\n",_case++);
+//            continue;
+//        }
+//        memset(pre, 0, sizeof(pre));
+//        memset(in, 0, sizeof(in));
+//        int p = 0;
+//        int num = 0;
+//        if (pre[n] == 0) {
+//            pre[n] = n;
+//            p++;
+//        }
+//        if (pre[m] == 0) {
+//            pre[m] = m;
+//            p++;
+//        }
+//        my_union(n, m);
+//        num++;
+//        
+//        while (scanf("%d%d", &n, &m) && n != 0 && m != 0) {
+//            if (pre[n] == 0) {
+//                pre[n] = n;
+//                p++;
+//            }
+//            if (pre[m] == 0) {
+//                pre[m] = m;
+//                p++;
+//            }
+//            my_union(n, m);
+//            num++;
+//        }
+//        if (flag == 1) {
+//            printf("Case %d is not a tree.\n", _case++);
+//            continue;
+//        }
+//        
+//        int k = 0;
+//        
+//        for (int i = 1; i <= 100005; i++) {
+//            if (pre[i] != 0) {
+//                if (pre[i] == i) {
+//                    k++;
+//                }
+//                else if (in[i] > 1) {
+//                    printf("Case %d is not a tree.\n", _case++);
+//                    goto aaaaaa;
+//                }
+//            }
+//        }
+//        
+//        if (k == 1 && num+1 == p) {
+//            printf("Case %d is a tree.\n",_case++);
+//        }else {
+//            printf("Case %d is not a tree.\n", _case++);
+//        }
+//    }
+//    return 0;
+//}
 
-//priority_queue<command> com;
+/*
+// G
+int pre[10000005];
+int ran[10000005];
+int flag = 0;
 
-bool operator< (const command &a, const command &b) // 重载
+int find1(int a)
 {
-    if (b.prio ==a.prio) {
-        return a.k > b.k;
+    if (pre[a] == a) {
+        return a;
     }
-    return b.prio < a.prio;
+    pre[a] = find1(pre[a]);
+    return pre[a];
 }
 
-int main(int argc, const char * argv[]) {
-    
-    priority_queue<command> com;
-    
-    char command1[4];
-    int i = 0;
-    while (~scanf("%s", command1)) {
-        
-        switch (command1[0]) {
-            case 'G':
-                if (com.size() == 0) {
-                    cout << "EMPTY QUEUE!" << endl;
-                }
-                else {
-                    command a = com.top();
-                    com.pop();
-                    cout << a.name << ' ' << a.para << endl;
-                }
-                break;
-            case 'P':{
-                command a;
-                cin >> a.name >> a.para;
-                cin >> a.prio;
-                a.k = i++;
-                com.push(a);
-            }
-                break;
-            default:
-                cout << "错了啊啊啊啊啊啊" << endl;
-                break;
+int find2(int a)
+{
+    int r = a;
+    while (a != pre[a]) {
+        a = pre[a];
+    }
+    while (r != a) {
+        int i = pre[r];
+        pre[r] = a;
+        r = i;
+    }
+    return a;
+}
+
+void my_union(int a, int b)
+{
+    int a1 = find1(a);
+    int b1 = find1(b);
+    if ( a1 == b1) {
+        flag = 1;
+        return;
+    }
+    if (ran[a1] > ran[b1]) {
+        pre[b1] = a1;
+        ran[a1] += ran[b1];
+    }
+    else {
+        pre[a1] = b1;
+        ran[b1] += ran[a1];
+    }
+}
+
+
+int main()
+{
+    int n = 0;
+    while (~scanf("%d", &n)) {
+        if (n == 0) {
+            printf("1\n");
+            continue;
         }
+//        int pre[15];
+//        int ran[15];
+
+        for (int i = 1; i <= 10000000; i++) {
+            ran[i] = 1;
+        }
+        memset(pre, 0, sizeof(pre));
+        
+        for (int i = 1; i <= n; i++) {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            if (pre[a] == 0) {
+                pre[a] = a;
+            }
+            if (pre[b] == 0) {
+                pre[b] = b;
+            }
+            my_union(a, b);
+        }
+        int tmp = 1;
+        for (int i = 1; i <= 10000000; i++) {
+            if (pre[i] == i) {
+                if (tmp < ran[i]) {
+                    tmp = ran[i];
+                }
+            }
+        }
+        printf("%d\n",tmp);
+    }
+    return 0;
+}
+
+
+
+// D
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+int pre[100005];
+int flag = 0;
+
+int find1(int a)
+{
+    if (pre[a] == a) {
+        return a;
+    }
+    pre[a] = find1(pre[a]);
+    return pre[a];
+}
+
+int find2(int a)
+{
+    int r = a;
+    while (a != pre[a]) {
+        a = pre[a];
+    }
+    while (r != a) {
+        int i = pre[r];
+        pre[r] = a;
+        r = i;
+    }
+    return a;
+}
+
+void my_union(int a, int b, int pre[])
+{
+    int a1 = find1(a);
+    int b1 = find1(b);
+    if ( a1 == b1) {
+        flag = 1;
+        return;
+    }
+    if (a1 > b1) {
+        pre[b1] = a1;
+    }
+    else {
+        pre[a1] = b1;
+    }
+}
+
+
+int main()
+{
+    int n,m;
+    while (~scanf("%d%d",&n,&m) && n != -1 && m != -1) {
+        if (n == 0 && m == 0) {
+            printf("Yes\n");
+            continue;
+        }
+        memset(pre, 0, sizeof(pre));
+        int p = 0;
+        int num = 0;
+        if (pre[n] == 0) {
+            pre[n] = n;
+            p++;
+        }
+        if (pre[m] == 0) {
+            pre[m] = m;
+            p++;
+        }
+        my_union(n, m,pre);
+        num++;
+        
+        while (scanf("%d%d", &n, &m) && n != 0 && m != 0) {
+            if (pre[n] == 0) {
+                pre[n] = n;
+                p++;
+            }
+            if (pre[m] == 0) {
+                pre[m] = m;
+                p++;
+            }
+            my_union(n, m,pre);
+            num++;
+        }
+        if (flag == 1) {
+            printf("No\n");
+            continue;
+        }
+        
+        int k = 0;
+        
+        for (int i = 1; i <= 100000; i++) {
+            if (pre[i] != 0) {
+                if (pre[i] == i) {
+                    k++;
+                }
+            }
+        }
+        
+        if (k == 1) {
+            printf("Yes\n");
+        }else {
+            printf("No\n");
+        }
+    }
+    return 0;
+}
+
+
+
+
+// B
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+
+using namespace std;
+int pre[1005];
+
+int find1(int a)
+{
+    if (pre[a] == a) {
+        return a;
+    }
+    pre[a] = find1(pre[a]);
+    return pre[a];
+}
+
+int find2(int a)
+{
+    int r = a;
+    while (a != pre[a]) {
+        a = pre[a];
+    }
+    while (r != a) {
+        int i = pre[r];
+        pre[r] = a;
+        r = i;
+    }
+    return a;
+}
+
+void my_union(int a, int b)
+{
+    int a1 = find1(a);
+    int b1 = find1(b);
+    if ( a1 == b1) {
+        return;
+    }
+    if (a1 > b1) {
+        pre[b1] = a1;
+    }
+    else {
+        pre[a1] = b1;
+    }
+}
+
+
+int main()
+{
+    int T = 0;
+    cin >> T;
+    while (T--) {
+        int n, m;
+        cin >> n >> m;
+        for (int i = 1; i <= n; i++) {
+            pre[i] = i;
+        }
+        
+        for (int i = 0; i < m; i++) {
+            int a,b;
+            scanf("%d%d", &a, &b);
+            int a1 = find1(a);
+            int b1 = find1(b);
+            my_union(a1, b1);
+        }
+        int k = 0;
+        for (int i = 1; i <= n; i++) {
+            if (pre[i] == i) {
+                k++;
+            }
+        }
+        
+        printf("%d\n",k);
+        
     }
     return 0;
 }
@@ -314,143 +496,138 @@ int main(int argc, const char * argv[]) {
 
 
 // A
-#include <iostream>
-#include <stack>
-#include <cstring>
-using namespace std;
+int pre[105];
+
+struct aaa {
+    int i;
+    int j;
+    int dist;
+};
+struct aaa city[10100];
+
+bool cmp(const aaa a, const aaa b) {
+    return a.dist < b.dist;
+}
+
+int find1(int a)
+{
+    if (pre[a] == a) {
+        return a;
+    }
+    pre[a] = find1(pre[a]);
+    return pre[a];
+}
+
+int find2(int a)
+{
+    int r = a;
+    while (a != pre[a]) {
+        a = pre[a];
+    }
+    while (r != a) {
+        int i = pre[r];
+        pre[r] = a;
+        r = i;
+    }
+    return a;
+}
+
+void my_union(int a, int b)
+{
+    int a1 = find1(a);
+    int b1 = find1(b);
+    if ( a1 == b1) {
+        return;
+    }
+    if (a1 > b1) {
+        pre[b1] = a1;
+    }
+    else {
+        pre[a1] = b1;
+    }
+}
+
 
 int main()
 {
-    stack<double> s;
-    double num;
-    char ch;
-    char blank;
-    while (~scanf("%lf%c", &num, &blank)) {
-        if (num == 0 && blank == '\n') {
-            break;
+    int n = 0;
+    while (~scanf("%d", &n)) {
+        for (int i = 1; i <= n; i++) {
+            pre[i] = i;
         }
-        s.push(num);
-        while (scanf("%c", &ch)) {
-            scanf("%c%lf", &blank, &num);
-            switch (ch) {
-                case '+':
-                    s.push(num);
-                    break;
-                case '-':
-                    s.push(-num);
-                    break;
-                case '*':{
-                    double a = s.top();
-                    s.pop();
-                    s.push(a*num);
-                }
-                    break;
-                case '/':{
-                    double a = s.top();
-                    s.pop();
-                    s.push(a/num);
-                }
-                default:
-                    break;
-            }
-            scanf("%c", &blank);
-            if (blank == '\n') {
-                break;
-            }
-        }
-        double sum = 0;
-        while (s.size() != 0) {
-            sum += s.top();
-            s.pop();
-        }
-        printf("%0.2lf\n", sum);
-    }
-    return 0;
-}
-
-
- 
-//B
-#include <iostream>
-#include <stack>
-#include <cstdio>
-#include <cstring>
-#include <string>
-
-using namespace std;
-
-int main(int argc, const char * argv[]) {
-    int n;
-    cin >> n;
-    getchar();
-flag:
-    while (n--) {
-        stack<char> str;
-        char a[130];
-        fgets(a, 130, stdin);
-        int i = 0;
-        while ( a[i] != '\0') {
-            switch (a[i]) {
-                case '(':
-                    str.push('(');
-                    break;
-                case '[':
-                    str.push('[');
-                    break;
-                case ')':
-                    if (str.size() > 0 && str.top() == '(') {
-                        str.pop();
-                    }
-                    else {
-                        cout << "No" << endl;
-                        goto flag;
-                    }
-                    break;
-                case ']':
-                    if (str.size() > 0 && str.top() == '[') {
-                        str.pop();
-                    }
-                    else {
-                        cout << "No" << endl;
-                        goto flag;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            i++;
-        }
-        if (str.size() != 0) {
-            cout << "No" << endl;
-        }
-        else {
-            cout << "Yes" << endl;
-        }
-    }
-    return 0;
-}
-
-
-
-// E
-#include <iostream>
-using namespace std;
-
-int main(int argc, const char * argv[]) {
-    char str[1002];
-    while (~scanf("%s", str)) {
+        
         int num = 0;
-        int i = 0;
-        while ( str[i] != 'B') {
-            if (str[i] == '(') {
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                int a;
+                scanf("%d", &a);
+                if (i != j) {
+                    city[num].dist = a;
+                    city[num].i = i;
+                    city[num++].j = j;
+                }
+            }
+        }
+        sort(city, city+num, cmp);
+        
+        
+        
+        
+        int Q = 0;
+        scanf("%d",&Q);
+        int a1,b1;
+        int l = 0;
+        for (int i = 0; i < Q; i++) {
+            int a,b;
+            scanf("%d%d", &a, &b);
+            int a1 = find1(a);
+            int b1 = find1(b);
+            my_union(a1, b1);
+        }
+        int k = 0;
+        for (int i = 0; i < num && l < n; i++) {
+            a1 = find1(city[i].i);
+            b1 = find1(city[i].j);
+            
+            if (a1 != b1) {
+                if (a1 > b1) {
+                    pre[b1] = a1;
+                }
+                else {
+                    pre[a1] = b1;
+                }
+                k += city[i].dist;
+                l++;
+            }
+        }
+        printf("%d\n",k);
+        
+    }
+    return 0;
+}
+
+
+// C
+int main(int argc, const char * argv[]) {
+    
+    int n = 0,m = 0;
+    while (~scanf("%d", &n) && n != 0) {
+        scanf("%d", &m);
+        for (int i = 1; i <= n; i++) {
+            pre[i] = i;
+        }
+        for (int i = 1; i <= m; i++) {
+            int a,b;
+            scanf("%d%d",&a,&b);
+            my_union(a, b);
+        }
+        int num = 0;
+        for (int i = 1; i <= n; i++) {
+            if (pre[i] == i) {
                 num++;
             }
-            else{
-                num--;
-            }
-            i++;
         }
-        cout << num << endl;
+        printf("%d\n",num-1);
     }
     return 0;
 }
