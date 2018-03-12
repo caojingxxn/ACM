@@ -1,633 +1,190 @@
 //
 //  main.cpp
-//  ACM_0126
+//  acm热身赛
 //
-//  Created by admin on 18/1/26.
+//  Created by admin on 18/3/9.
 //  Copyright © 2018年 Amon. All rights reserved.
 //
+
 #include <iostream>
-#include <cstdio>
-#include <algorithm>
-#include <cstring>
-
 using namespace std;
-int pre[2005];
-//int d[2005];
-int flag = 0;
 
-int find1(int a,int d[])
-{
-    if (pre[a] == a) {
-        return a;
-    }
-    int m = pre[a];
-    pre[a] = find1(pre[a],d);
-    d[a] = d[m] + 1 + d[a];
-    return pre[a];
-}
+int y[32][32];
 
-int find2(int a)
-{
-    int r = a;
-    while (a != pre[a]) {
-        a = pre[a];
+int main() {
+    for (int i = 1; i <= 30; ++i) {
+        y[i][1] = 1;
+        y[i][i] = 1;
     }
-    while (r != a) {
-        int i = pre[r];
-        pre[r] = a;
-        r = i;
-    }
-    return a;
-}
-
-void my_union(int a, int b, int d[])
-{
-    int a1 = find1(a,d);
-    int b1 = find1(b,d);
-    if ( a1 == b1) {
-        if ((d[a]+d[b]) % 2 == 0) {
-            flag = 1;
-            return;
+    for (int i = 2; i <= 30; ++i) {
+        for (int j = 2; j < i; ++j) {
+            y[i][j] = y[i-1][j-1] + y[i-1][j];
         }
     }
-    pre[a1] = b1;
-    d[a1] = d[b] + 1 + d[a];
-}
-
-
-int main()
-{
-    int scenario;
-    cin >> scenario;
-    int _case = 1;
-    int d[2005];
-
-    while(scenario--) {
-        memset(pre, 0, sizeof(pre));
-        memset(d, 0, sizeof(d));
-        flag = 0;
-        int number,intera; // 虫  行为
-        scanf("%d%d",&number,&intera);
-        if (intera == 0) {
-            printf("Scenario #%d:\nNo suspicious bugs found!\n",_case++);
-            continue;
+    int a;
+    scanf("%d", &a);
+    for (int i = 1; i <= a; ++i) {
+        int j = 1;
+        for (; j < i; ++j) {
+            printf("%d ", y[i][j]);
         }
-        
-        int n,m;
-        for (int i = 1; i <= intera; i++) {
-            scanf("%d%d", &n, &m);
-            if (pre[n] == 0) {
-                pre[n] = n;
+        printf("%d\n", y[i][j]);
+    }
+    while (~scanf("%d", &a)) {
+        printf("\n");
+        for (int i = 1; i <= a; ++i) {
+            int j = 1;
+            for (; j < i; ++j) {
+                printf("%d ", y[i][j]);
             }
-            if (pre[m] == 0) {
-                pre[m] = m;
-            }
-            my_union(n, m, d);
-            
-        }
-        
-        if (flag == 1) {
-            printf("Scenario #%d:\nSuspicious bugs found!\n",
-                   _case++);
-            
-        }
-        else{
-            printf("Scenario #%d:\nNo suspicious bugs found!\n",_case++);
+            printf("%d\n", y[i][j]);
         }
     }
-    
     return 0;
 }
 
-
-
-//#include <iostream>
-//#include <cstdio>
-//#include <algorithm>
-//#include <cstring>
-//
-//using namespace std;
-//int pre[100005];
-//int in[100005];// 记录入度
-//int flag = 0;
-//
-//
-//
-//int find1(int a)
-//{
-//    if (pre[a] == a) {
-//        return a;
-//    }
-//    pre[a] = find1(pre[a]);
-//    return pre[a];
-//}
-//
-//int find2(int a)
-//{
-//    int r = a;
-//    while (a != pre[a]) {
-//        a = pre[a];
-//    }
-//    while (r != a) {
-//        int i = pre[r];
-//        pre[r] = a;
-//        r = i;
-//    }
-//    return a;
-//}
-//
-//void my_union(int a, int b)
-//{
-//    int a1 = find2(a);
-//    int b1 = find2(b);
-//    if ( a1 == b1) {
-//        flag = 1;
-//        return;
-//    }
-//    pre[a1] = b1;
-//    in[b] += 1;
-//}
-//
-//
-//int main()
-//{
-//    int n,m;
-//    int _case = 1;
-//aaaaaa:
-//    while (~scanf("%d%d",&n,&m) && n != -1 && m != -1) {
-//        if (n == 0 && m == 0) {
-//            printf("Case %d is a tree.\n",_case++);
-//            continue;
-//        }
-//        memset(pre, 0, sizeof(pre));
-//        memset(in, 0, sizeof(in));
-//        int p = 0;
-//        int num = 0;
-//        if (pre[n] == 0) {
-//            pre[n] = n;
-//            p++;
-//        }
-//        if (pre[m] == 0) {
-//            pre[m] = m;
-//            p++;
-//        }
-//        my_union(n, m);
-//        num++;
-//        
-//        while (scanf("%d%d", &n, &m) && n != 0 && m != 0) {
-//            if (pre[n] == 0) {
-//                pre[n] = n;
-//                p++;
-//            }
-//            if (pre[m] == 0) {
-//                pre[m] = m;
-//                p++;
-//            }
-//            my_union(n, m);
-//            num++;
-//        }
-//        if (flag == 1) {
-//            printf("Case %d is not a tree.\n", _case++);
-//            continue;
-//        }
-//        
-//        int k = 0;
-//        
-//        for (int i = 1; i <= 100005; i++) {
-//            if (pre[i] != 0) {
-//                if (pre[i] == i) {
-//                    k++;
-//                }
-//                else if (in[i] > 1) {
-//                    printf("Case %d is not a tree.\n", _case++);
-//                    goto aaaaaa;
-//                }
-//            }
-//        }
-//        
-//        if (k == 1 && num+1 == p) {
-//            printf("Case %d is a tree.\n",_case++);
-//        }else {
-//            printf("Case %d is not a tree.\n", _case++);
-//        }
-//    }
-//    return 0;
-//}
 
 /*
-// G
-int pre[10000005];
-int ran[10000005];
-int flag = 0;
-
-int find1(int a)
-{
-    if (pre[a] == a) {
-        return a;
-    }
-    pre[a] = find1(pre[a]);
-    return pre[a];
-}
-
-int find2(int a)
-{
-    int r = a;
-    while (a != pre[a]) {
-        a = pre[a];
-    }
-    while (r != a) {
-        int i = pre[r];
-        pre[r] = a;
-        r = i;
-    }
-    return a;
-}
-
-void my_union(int a, int b)
-{
-    int a1 = find1(a);
-    int b1 = find1(b);
-    if ( a1 == b1) {
-        flag = 1;
-        return;
-    }
-    if (ran[a1] > ran[b1]) {
-        pre[b1] = a1;
-        ran[a1] += ran[b1];
-    }
-    else {
-        pre[a1] = b1;
-        ran[b1] += ran[a1];
-    }
-}
-
-
 int main()
 {
-    int n = 0;
-    while (~scanf("%d", &n)) {
-        if (n == 0) {
-            printf("1\n");
-            continue;
-        }
-//        int pre[15];
-//        int ran[15];
-
-        for (int i = 1; i <= 10000000; i++) {
-            ran[i] = 1;
-        }
-        memset(pre, 0, sizeof(pre));
-        
-        for (int i = 1; i <= n; i++) {
-            int a,b;
-            scanf("%d%d",&a,&b);
-            if (pre[a] == 0) {
-                pre[a] = a;
-            }
-            if (pre[b] == 0) {
-                pre[b] = b;
-            }
-            my_union(a, b);
-        }
-        int tmp = 1;
-        for (int i = 1; i <= 10000000; i++) {
-            if (pre[i] == i) {
-                if (tmp < ran[i]) {
-                    tmp = ran[i];
-                }
-            }
-        }
-        printf("%d\n",tmp);
-    }
-    return 0;
-}
-
-
-
-// D
-#include <iostream>
-#include <cstdio>
-#include <algorithm>
-#include <cstring>
-
-using namespace std;
-int pre[100005];
-int flag = 0;
-
-int find1(int a)
-{
-    if (pre[a] == a) {
-        return a;
-    }
-    pre[a] = find1(pre[a]);
-    return pre[a];
-}
-
-int find2(int a)
-{
-    int r = a;
-    while (a != pre[a]) {
-        a = pre[a];
-    }
-    while (r != a) {
-        int i = pre[r];
-        pre[r] = a;
-        r = i;
-    }
-    return a;
-}
-
-void my_union(int a, int b, int pre[])
-{
-    int a1 = find1(a);
-    int b1 = find1(b);
-    if ( a1 == b1) {
-        flag = 1;
-        return;
-    }
-    if (a1 > b1) {
-        pre[b1] = a1;
-    }
-    else {
-        pre[a1] = b1;
-    }
-}
-
-
-int main()
-{
-    int n,m;
-    while (~scanf("%d%d",&n,&m) && n != -1 && m != -1) {
-        if (n == 0 && m == 0) {
-            printf("Yes\n");
-            continue;
-        }
-        memset(pre, 0, sizeof(pre));
-        int p = 0;
-        int num = 0;
-        if (pre[n] == 0) {
-            pre[n] = n;
-            p++;
-        }
-        if (pre[m] == 0) {
-            pre[m] = m;
-            p++;
-        }
-        my_union(n, m,pre);
-        num++;
-        
-        while (scanf("%d%d", &n, &m) && n != 0 && m != 0) {
-            if (pre[n] == 0) {
-                pre[n] = n;
-                p++;
-            }
-            if (pre[m] == 0) {
-                pre[m] = m;
-                p++;
-            }
-            my_union(n, m,pre);
-            num++;
-        }
-        if (flag == 1) {
-            printf("No\n");
-            continue;
-        }
-        
-        int k = 0;
-        
-        for (int i = 1; i <= 100000; i++) {
-            if (pre[i] != 0) {
-                if (pre[i] == i) {
-                    k++;
-                }
-            }
-        }
-        
-        if (k == 1) {
-            printf("Yes\n");
-        }else {
-            printf("No\n");
+    int a;
+    while (~scanf("%d", &a) && a != 0) {
+        if (a % 2 == 0) {
+            printf("No Solution!\n");
+        } else {
+            printf("%d\n", a-1);
         }
     }
     return 0;
 }
 
-
-
-
-// B
-#include <iostream>
-#include <cstdio>
-#include <algorithm>
-
-using namespace std;
-int pre[1005];
-
-int find1(int a)
-{
-    if (pre[a] == a) {
-        return a;
-    }
-    pre[a] = find1(pre[a]);
-    return pre[a];
-}
-
-int find2(int a)
-{
-    int r = a;
-    while (a != pre[a]) {
-        a = pre[a];
-    }
-    while (r != a) {
-        int i = pre[r];
-        pre[r] = a;
-        r = i;
-    }
-    return a;
-}
-
-void my_union(int a, int b)
-{
-    int a1 = find1(a);
-    int b1 = find1(b);
-    if ( a1 == b1) {
-        return;
-    }
-    if (a1 > b1) {
-        pre[b1] = a1;
-    }
-    else {
-        pre[a1] = b1;
-    }
-}
-
-
-int main()
-{
-    int T = 0;
-    cin >> T;
-    while (T--) {
-        int n, m;
-        cin >> n >> m;
-        for (int i = 1; i <= n; i++) {
-            pre[i] = i;
+int main() {
+    char a[11];
+    int N;
+    scanf("%d", &N);
+    char b;
+    scanf("%c", &b);
+    while (N--) {
+        for (int i = 0; i < 11; ++i) {
+            scanf("%c", &a[i]);
         }
-        
-        for (int i = 0; i < m; i++) {
-            int a,b;
-            scanf("%d%d", &a, &b);
-            int a1 = find1(a);
-            int b1 = find1(b);
-            my_union(a1, b1);
+        scanf("%c", &b);
+        cout << '6';
+        for (int i = 6; i < 11; ++i) {
+            cout << a[i];
         }
-        int k = 0;
-        for (int i = 1; i <= n; i++) {
-            if (pre[i] == i) {
-                k++;
-            }
-        }
-        
-        printf("%d\n",k);
-        
+        cout << endl;
     }
     return 0;
 }
 
-
-
-// A
-int pre[105];
-
-struct aaa {
-    int i;
-    int j;
-    int dist;
-};
-struct aaa city[10100];
-
-bool cmp(const aaa a, const aaa b) {
-    return a.dist < b.dist;
-}
-
-int find1(int a)
-{
-    if (pre[a] == a) {
-        return a;
-    }
-    pre[a] = find1(pre[a]);
-    return pre[a];
-}
-
-int find2(int a)
-{
-    int r = a;
-    while (a != pre[a]) {
-        a = pre[a];
-    }
-    while (r != a) {
-        int i = pre[r];
-        pre[r] = a;
-        r = i;
-    }
-    return a;
-}
-
-void my_union(int a, int b)
-{
-    int a1 = find1(a);
-    int b1 = find1(b);
-    if ( a1 == b1) {
-        return;
-    }
-    if (a1 > b1) {
-        pre[b1] = a1;
-    }
-    else {
-        pre[a1] = b1;
-    }
-}
-
-
-int main()
-{
-    int n = 0;
-    while (~scanf("%d", &n)) {
-        for (int i = 1; i <= n; i++) {
-            pre[i] = i;
-        }
-        
-        int num = 0;
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                int a;
-                scanf("%d", &a);
-                if (i != j) {
-                    city[num].dist = a;
-                    city[num].i = i;
-                    city[num++].j = j;
-                }
+int main() {
+    int N;
+    while (~scanf("%d", &N) && N != 0) {
+        for (int i = 1; i <= N; ++i) {
+            for (int k = N-i; k > 0; --k) {
+                printf(" ");
             }
-        }
-        sort(city, city+num, cmp);
-        
-        
-        
-        
-        int Q = 0;
-        scanf("%d",&Q);
-        int a1,b1;
-        int l = 0;
-        for (int i = 0; i < Q; i++) {
-            int a,b;
-            scanf("%d%d", &a, &b);
-            int a1 = find1(a);
-            int b1 = find1(b);
-            my_union(a1, b1);
-        }
-        int k = 0;
-        for (int i = 0; i < num && l < n; i++) {
-            a1 = find1(city[i].i);
-            b1 = find1(city[i].j);
-            
-            if (a1 != b1) {
-                if (a1 > b1) {
-                    pre[b1] = a1;
-                }
-                else {
-                    pre[a1] = b1;
-                }
-                k += city[i].dist;
-                l++;
+            for (int j = 2*i-1; j > 0; --j) {
+                printf("*");
             }
+            cout << endl;
         }
-        printf("%d\n",k);
-        
     }
     return 0;
 }
 
+int gcd(int a, int b) {
+    int x = a % b;
+    int y = b;
+    while (x != 0) {
+        a = y;
+        b = x;
+        x = a % b;
+        y = b;
+    }
+    return b;
+}
 
-// C
+int main () {
+    int a, b;
+    while (~scanf("%d%d", &a, &b)) {
+        int k = gcd(a, b);
+        printf("%d %d\n", k, a*b/k);
+    }
+    return 0;
+}
+
+int main() {
+    int a, b , c, d;
+    while (~scanf("%d%d%d%d", &a, &b, &c, &d) &&
+           (a != 0 || b != 0 || c != 0 || d != 0)) {
+        // b + d //卖的钱
+        // a + d // 赔的钱
+        // b + d - c // 赚的钱
+        printf("%d\n", a - b  + c);
+    }
+    return 0;
+}
+
+int main() {
+    int a, b;
+    while (~scanf("%d%d", &a, &b)) {
+        int flag = 0;
+        int first = 0;
+        for (; a <= b; ++a) {
+            int a1, a2, a3;
+            a1 = a % 10; // 个位
+            a2 = (a / 10) % 10; // 十位
+            a3 = (a / 100) % 10;
+            if (a == a1*a1*a1 + a2*a2*a2 + a3*a3*a3) {
+                flag = 1;
+                if (first != 0) {
+                    printf(" ");
+                }
+                printf("%d", a);
+                ++first;
+            }
+        }
+        if (flag == 0) {
+            printf("no");
+        }
+        printf("\n");
+    }
+    return 0;
+}
+
+int main() {
+    int s;
+    while (~scanf("%d", &s)) {
+        if (s > 100 || s < 0) {
+            printf("Score is error!\n");
+        } else {
+            if (s <= 59) {
+                printf("E\n");
+            } else if (s <= 69) {
+                printf("D\n");
+            } else if (s <= 79) {
+                printf("C\n");
+            } else if (s <= 89) {
+                printf("B\n");
+            } else {
+                printf("A\n");
+            }
+        }
+    }
+    return 0;
+}
+
 int main(int argc, const char * argv[]) {
-    
-    int n = 0,m = 0;
-    while (~scanf("%d", &n) && n != 0) {
-        scanf("%d", &m);
-        for (int i = 1; i <= n; i++) {
-            pre[i] = i;
+    int n;
+    int flag = 0;
+    while (~scanf("%d", &n)) {
+        if (flag != 0) {
+            printf("\n");
         }
-        for (int i = 1; i <= m; i++) {
-            int a,b;
-            scanf("%d%d",&a,&b);
-            my_union(a, b);
-        }
-        int num = 0;
-        for (int i = 1; i <= n; i++) {
-            if (pre[i] == i) {
-                num++;
-            }
-        }
-        printf("%d\n",num-1);
+        printf("%d\n", (1+n)*n / 2);
+        ++flag;
     }
     return 0;
 }
