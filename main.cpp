@@ -6,8 +6,47 @@
 //  Copyright © 2018年 Amon. All rights reserved.
 //
 
-
 /*
+
+// L3 02
+// 据说用线段树
+int cmp(int a, int b) {
+    return a < b;
+}
+
+int stack[100010];
+int size = 0;
+int stack1[100010];
+
+void pop() {
+    if (size == 0) {
+        cout << "Invalid" << endl;
+    } else {
+        --size;
+        cout << stack[size] << endl;
+    }
+}
+
+void push() {
+    int value;
+    cin >> value;
+    stack[size++] = value;
+}
+
+void PeekMedian() {
+    if (size == 0) {
+        cout << "Invalid" << endl;
+    } else {
+        memcpy(stack1, stack, sizeof(int) * size + 20);
+        sort(stack1, stack1 + size, cmp);
+        if (size % 2 == 0) {
+            cout << stack1[size / 2 - 1] << endl;
+        } else {
+            cout << stack1[size / 2] << endl;
+        }
+    }
+}
+
 // 7
 struct family{
     int mon1;
@@ -76,33 +115,6 @@ int main() {
 
 
 
-//28
-int main() {
-    int n;
-    while (~scanf("%d", &n)) {
-        for (int i = 0; i < n; ++i) {
-            int k;
-            scanf("%d", &k);
-            int flag = 0;
-            if (k != 2 && k % 2 == 0) {
-                cout << "No" << endl;
-                continue;
-            }
-            for (int d = 3; d < k; d += 2) {
-                if (k % d == 0) {
-                    cout << "No" << endl;
-                    flag = 1;
-                    break;
-                }
-            }
-            if (flag == 0) {
-                cout << "Yes" << endl;
-            }
-        }
-    }
-    return 0;
-}
-
 
 
 */
@@ -117,49 +129,74 @@ int main() {
 #include <vector>
 #include <queue>
 #include <math.h>
+#include <cstdlib>
+#include <string>
 
 using namespace std;
 
-
 /*
-// L3 02
-// 据说用线段树，我靠，那好麻烦啊
-int cmp(int a, int b) {
-    return a < b;
+
+// 3
+int map[1010];
+int inter[1010];
+int road[1010];
+
+int _find(int x) {
+    if (x == map[x]) {
+        return x;
+    }
+    return _find(map[x]);
 }
 
-int stack[100010];
-int size = 0;
-int stack1[100010];
-
-void pop() {
-    if (size == 0) {
-        cout << "Invalid" << endl;
-    } else {
-        --size;
-        cout << stack[size] << endl;
+void _union(int x, int y) {
+    x = _find(x);
+    y = _find(y);
+    if (x != y) {
+        map[x] = y;
+        road[y] += road[x];
     }
 }
 
-void push() {
-    int value;
-    cin >> value;
-    stack[size++] = value;
+int cmp(int a, int b) {
+    return a > b;
 }
 
-void PeekMedian() {
-    if (size == 0) {
-        cout << "Invalid" << endl;
-    } else {
-        memcpy(stack1, stack, sizeof(int) * size + 20);
-        sort(stack1, stack1 + size, cmp);
-        if (size % 2 == 0) {
-            cout << stack1[size / 2 - 1] << endl;
-        } else {
-            cout << stack1[size / 2] << endl;
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 1; i <= n; ++i) {
+        map[i] = i;
+        road[i] = 1;
+    }
+    for (int i = 1; i <= n; ++i) {
+        int k;
+        scanf("%d: ", &k);
+        for (int j = 0; j < k; ++j) {
+            int d;
+            cin >> d;
+            if (inter[d] == 0) {
+                inter[d] = i;
+            } else {
+                _union(i, inter[d]);
+            }
         }
     }
+    int num = 0;
+    int arr[1010];
+    for (int i = 1; i <= n; ++i) {
+        if (map[i] == i) {
+            arr[num++] = road[i];
+        }
+    }
+    cout << num << endl;
+    sort(arr, arr + num, cmp);
+    for (int i = 0; i < num - 1; ++i) {
+        cout << arr[i] << ' ';
+    }
+    cout << arr[num - 1] << endl;
+    return 0;
 }
+
 
 int main() {
     int n;
@@ -406,6 +443,55 @@ int main() {
     printf("%d\n", ret);
     return 0;
 }
+
+// 20
+struct dedao {
+    bool is;
+    vector<int> stu;
+} dedao[100010];
+
+
+double z, r; // 0号功力 折扣
+double sum;
+
+void dfs(int now, double w) { // 目前是几号 当前功力
+    if (dedao[now].is == 1) {
+        // 是得道者
+        sum += dedao[now].stu[0] * w;
+        return;
+    }
+    for (int i = 0; i < dedao[now].stu.size(); ++i) {
+        dfs(dedao[now].stu[i], w * r);
+    }
+}
+
+int main() {
+    int n; // 人数
+    cin >> n >> z >> r;
+    r = 1 - r / 100;
+    for (int i = 0; i < n; ++i) {
+        int k, m;
+        cin >> k;
+        if (k == 0) {
+            dedao[i].is = 1;
+            cin >> m;
+            // 放大倍数
+            dedao[i].stu.push_back(m);
+        } else {
+            dedao[i].is = 0;
+            for (int j = 0; j < k; ++j) {
+                cin >> m;
+                dedao[i].stu.push_back(m);
+            }
+        }
+    }
+    dfs(0, z);
+    cout << (int)sum << endl;
+    
+    
+    return 0;
+}
+
 
 
 // 19
@@ -1230,6 +1316,38 @@ int main() {
 }
 
 
+//28
+int main() {
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; ++i) {
+        int k;
+        scanf("%d", &k);
+        if (k == 1) {
+            cout << "No" << endl;
+            continue;
+        }
+        int flag = 0;
+        if (k != 2 && k % 2 == 0) {
+            cout << "No" << endl;
+            continue;
+        }
+        for (int d = 3; d <= sqrt(k); d += 2) {
+            if (k % d == 0) {
+                cout << "No" << endl;
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 0) {
+            cout << "Yes" << endl;
+        }
+    }
+    return 0;
+}
+
+
+
 // 27
 int main() {
     char str[15];
@@ -1718,6 +1836,62 @@ int main() {
     return 0;
 }
 
+// 9
+long long gcd(long long a, long long b) {
+    long long r;
+    while (b > 0) {
+        r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+
+
+int main() {
+    int n;
+    cin >> n;
+    
+    long long int son;
+    long long int mother;
+    long long int ssum = 0;
+    long long int msum = 1;
+    long long int _gcd;
+    
+    for (int i = 0; i < n; ++i) {
+        scanf("%lld/%lld", &son, &mother);
+        if (son != 0) {
+            _gcd = gcd(abs(son), mother);
+            son /= _gcd;
+            mother /= _gcd;
+        }
+        if (i == 0) {
+            ssum = son;
+            msum = mother;
+        } else {
+            _gcd = gcd(mother, msum);
+            ssum *= mother / _gcd;
+            ssum += son * msum / _gcd;
+            msum *= mother / _gcd;
+            _gcd = gcd(abs(ssum), msum);
+            ssum /= _gcd;
+            msum /= _gcd;
+        }
+    }
+    
+    long long int a = ssum / msum, b = ssum % msum;
+    if (b == 0) {
+        // ÕûÊý
+        cout <<	a << endl;
+    } else if (a == 0){
+        // ÕûÊýÎª 0 
+        cout << ssum << '/' << msum << endl;
+    } else {
+        cout << a << ' ' << ssum - a * msum << '/' << msum << endl;
+    }
+    system("pause");
+    return 0;
+}
 
 // 8
 int main() {
